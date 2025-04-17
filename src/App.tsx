@@ -8,21 +8,27 @@ import Home from './pages/Dashboard/Home';
 import Profile from './pages/Dashboard/Profile';
 import Settings from './pages/Dashboard/Setting';
 import NotFound from './pages/NotFound';
-
+import { usePersistAuth } from './app/persistAuth';
+const AppRoutes = () => {
+  usePersistAuth();
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/dashboard" element={<AppLayout />}>
+        <Route index element={<Home />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="settings" element={<Settings />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<AppLayout />}>
-            <Route index element={<Home />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AppRoutes />
       </Router>
     </Provider>
   );

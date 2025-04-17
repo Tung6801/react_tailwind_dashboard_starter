@@ -20,6 +20,7 @@ const AppHeader: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
+    window.location.reload();
   };
 
   const items = [

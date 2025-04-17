@@ -1,3 +1,4 @@
+import { rejects } from "assert";
 
 
 interface User {
@@ -15,19 +16,30 @@ interface User {
     },
     {
       id: 2,
-      username: 'user1',
-      email: 'user1@example.com',
+      username: 'admin1',
+      email: 'admin1@example.com',
       password: '123456',
     },
   ];
-  export const authenticate = (username: string, password: string): User | null => {
-    const user = mockUsers.find(
-      (u) => (u.username === username || u.email === username) && u.password === password
-    );
-    return user || null;
+  export const authenticate = (username: string, password: string): Promise<User | null> => {
+    return new Promise((resolve,reject) => {
+      setTimeout(() => {
+        const savedAuth = localStorage.getItem('auth');
+      if (savedAuth && JSON.parse(savedAuth).user) {
+        return reject(new Error('Đã có tài khoản đăng nhập'));
+      }
+      
+        const user = mockUsers.find(
+          (u) => (u.username === username || u.email === username) && u.password === password
+        );
+        resolve(user || null);
+      }, 500);
+    });
   };
-  export const checkUserExists = (username: string): boolean => {
-    return mockUsers.some((u) => u.username === username || u.email === username);
+  export const checkUserExists = (usernameOrEmail: string):Promise <boolean> => {
+    return Promise.resolve(
+      mockUsers.some((u) => u.username === usernameOrEmail || u.email === usernameOrEmail)
+    );
   };
   export const registerUser = (userData: Omit<User, 'id'>): Promise <User> => {
     return new Promise((resolve) => {

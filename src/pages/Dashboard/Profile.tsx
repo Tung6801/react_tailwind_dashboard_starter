@@ -1,17 +1,20 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
+import { Card, Descriptions } from 'antd';
 
 const Profile: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
-      <div className="space-y-2">
-        <p><strong>Username:</strong> {user?.username}</p>
-        <p><strong>Email:</strong> {user?.email}</p>
-      </div>
+    <div className='p-4'>
+      <Card title="Thông tin cá nhân" bordered={false}>
+        <Descriptions column={1}>
+          <Descriptions.Item label="ID">{user?.id}</Descriptions.Item>
+          <Descriptions.Item label="Username">{user?.username}</Descriptions.Item>
+          <Descriptions.Item label="Email">{user?.email}</Descriptions.Item>
+        </Descriptions>
+      </Card>
     </div>
   );
 };
