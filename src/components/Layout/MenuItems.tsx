@@ -5,14 +5,22 @@ import {
   UserOutlined, 
   SettingOutlined 
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const MenuItems: React.FC = () => {
+  const location = useLocation();
+
+  const getSelectedKey = () => {
+    if (location.pathname === '/dashboard') return '1';
+    if (location.pathname === '/dashboard/profile') return '2';
+    if (location.pathname === '/dashboard/setting') return '3';
+    return '';
+  }
   return (
     <Menu
       theme="dark"
       mode="inline"
-      defaultSelectedKeys={['1']}
+      selectedKeys={[getSelectedKey()]}
       items={[
         {
           key: '1',
