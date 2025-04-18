@@ -1,47 +1,54 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Await, useNavigate } from 'react-router-dom';
+import React, { useState,useEffect } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { loginSuccess } from '../features/auth/authSlice';
 import { authenticate } from '../services/authService';
 import { Button, Form, Input, message } from 'antd';
+import { RootState } from '../app/store';
 
 const LoginPage: React.FC = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {user} = useSelector((state:RootState) => state.auth)
 
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const onFinish = async (values: {username: string, password: string}) => {
     try{
       setLoading(true);
-
+      setErrorMessage('');
       const savedAuth = localStorage.getItem('auth');
       if (savedAuth) {
-        const { user } = JSON.parse(savedAuth);
-        if (user) {
-          throw new Error('Vui lòng đăng xuất tài khoản hiện tại trước');
+        const parsedAuth = JSON.parse(savedAuth);
+        if (parsedAuth.user) {
+          throw new Error('Bạn đã đăng nhập. Vui lòng đăng xuất trước.');
         }
       }
-
+      
       const user= await authenticate(values.username, values.password)
-      if(user) {
+      if(!user) {
+        throw new Error('Sai tên đăng nhập hoặc mật khẩu');
+      }
         dispatch(loginSuccess({
           id: user.id,
           username: user.username,
           email: user.email
 
         }));
-        message.success('login success !')
+        message.success('Đăng nhập thành công!');
         navigate('/dashboard');
-      }else {
-        message.error('sai ten tai khoan hoac mat khau')
+      } catch (error: any) {
+        setErrorMessage(error.message || 'Đăng nhập thất bại');
+      } finally {
+        setLoading(false);
       }
-    } catch(error) {
-      message.error('Looogin failed')
-    }finally {
-      setLoading(false)
-    }
-  }
+    };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow">
@@ -75,6 +82,11 @@ const LoginPage: React.FC = () => {
           >
             Log in
           </Button>
+          {errorMessage && (
+            <div className="text-red-500 text-sm mt-2 text-center">
+              {errorMessage}
+            </div>
+          )}
         </Form>
       </div>
     </div>

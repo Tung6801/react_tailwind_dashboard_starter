@@ -9,13 +9,18 @@ import Profile from './pages/Dashboard/Profile';
 import Settings from './pages/Dashboard/Setting';
 import NotFound from './pages/NotFound';
 import { usePersistAuth } from './app/persistAuth';
+
+
+import PrivateRoute from './routes/PrivateRoute.';
 const AppRoutes = () => {
   usePersistAuth();
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/dashboard" element={<AppLayout />}>
+      <Route path="/dashboard" element={<PrivateRoute>
+      <AppLayout />
+      </PrivateRoute>}>
         <Route index element={<Home />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />

@@ -1,5 +1,3 @@
-import { rejects } from "assert";
-
 
 interface User {
     id: number;
@@ -16,40 +14,54 @@ interface User {
     },
     {
       id: 2,
-      username: 'admin1',
-      email: 'admin1@example.com',
+      username: 'user',
+      email: 'user@example.com',
       password: '123456',
     },
   ];
   export const authenticate = (username: string, password: string): Promise<User | null> => {
+    
     return new Promise((resolve,reject) => {
       setTimeout(() => {
-        const savedAuth = localStorage.getItem('auth');
-      if (savedAuth && JSON.parse(savedAuth).user) {
-        return reject(new Error('Đã có tài khoản đăng nhập'));
-      }
-      
-        const user = mockUsers.find(
-          (u) => (u.username === username || u.email === username) && u.password === password
-        );
-        resolve(user || null);
-      }, 500);
+          const user = mockUsers.find(
+            (u) => (u.username === username || u.email === username) && u.password === password
+          );
+          if (!user) {
+            reject(new Error('Incorrect account or password'));
+            return;
+          }
+          
+      resolve(user);
+    },500);
     });
-  };
+        }
+      
   export const checkUserExists = (usernameOrEmail: string):Promise <boolean> => {
     return Promise.resolve(
       mockUsers.some((u) => u.username === usernameOrEmail || u.email === usernameOrEmail)
     );
   };
   export const registerUser = (userData: Omit<User, 'id'>): Promise <User> => {
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
       setTimeout(() => {
-        const newUser = {
-          ...userData,
-          id: mockUsers.length + 1,
-        };
-        mockUsers.push(newUser);
-        resolve(newUser);
-      }, 500);
+        try{
+          const exists = mockUsers.some(
+            u => u.username === userData.username || u.email === userData.email
+          );
+          
+          if (exists) {
+            reject(new Error('Username hoặc email đã tồn tại'));
+            return;
+          }
+          const newUser = {
+            ...userData,
+            id: mockUsers.length + 1,
+          };
+          mockUsers.push(newUser);
+          resolve(newUser);
+        } catch (error) {
+        reject(error);
+        }
+        }, 500);
     });
   };

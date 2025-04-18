@@ -1,17 +1,12 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, } from 'antd';
 import { 
-  HomeOutlined, 
-  UserOutlined, 
-  SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined 
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../../features/layout/layoutSlice';
 import { RootState } from '../../app/store';
-import { Link } from 'react-router-dom';
-import MenuItem from 'antd/es/menu/MenuItem';
 import MenuItems from './MenuItems';
 
 const { Sider } = Layout;
@@ -29,7 +24,7 @@ const Sidebar: React.FC = () => {
       className="shadow-lg"
     >
       <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
-        {collapsed ? 'Logo' : 'My Dashboard'}
+        {collapsed ? '' : 'My Dashboard'}
       </div>
       <button 
         onClick={() => dispatch(toggleSidebar())}
